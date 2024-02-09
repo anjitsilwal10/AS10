@@ -1,34 +1,43 @@
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/myNewDatabase');
+
+var personSchema = mongoose.Schema({
+    name: String,
+    age: Number,
+    nationality: String,
+})
+var Person = mongoose.model("Person" , personSchema);
+
 var express = require('express');
-var things = require('./things');
 var app = express();
 
+app.set('view engine' , 'pug');
+app.set('views', './views')
 
-app.set('view engine', 'pug');
-app.set('views','./views');
-
-app.get('/' , function(req,res){
-    res.send('hello world');
-});
-
-app.get('/:id([0-9]{4})', function(req,res){
-    res.send('The id you specified is:' + req.params.id);
-});
-
-app.get('/things/:name/:id([0-9]{4})', function(req,res){
-    res.send('id:'+ req.params.id + ' ' + 'name:' + req.params.name );
-});
-
-app.get('/first_template', function (req,res){
-    res.render('first_view')
-});
-
-app.get('/dynamic_view', function (req,res){
-    res.render('dynamic',{
-        name: "AS10",
-        url: "http://www.tutorialspoint.com",
-
-    });
-});
-
-app.use('/things',things);
+app.get('/person', function(req, res){
+    res.render('person');
+ }); 
+ 
+app.post('/person', function(req, res){
+    var personInfo = req.body; //Get the parsed information
+    
+    if(!personInfo.name || !personInfo.age || !personInfo.nationality){
+       res.render('show_message', {
+          message: "Sorry, you provided worng info", type: "error"});
+    } else {
+       var newPerson = new Person({
+          name: personInfo.name,
+          age: personInfo.age,
+          nationality: personInfo.nationality
+       });
+         
+       newPerson.save(function(err, Person){
+          if(err)
+             res.render('show_message', {message: "Database error", type: "error"});
+          else
+             res.render('show_message', {
+                message: "New person added", type: "success", person: personInfo});
+       });
+    }
+ });
 app.listen(3000);
