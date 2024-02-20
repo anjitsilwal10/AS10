@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017//myNewDatabase')
+mongoose.connect('mongodb://localhost/myNewDatabase')
    .then(() =>
    console.log('MongoDB Connected...'))
    .catch(err =>
@@ -13,17 +13,20 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 
 app.set('view engine' , 'pug');
-app.set('views', './views')
+app.set('views', './views');
+
+const personController = require('./controller/personController')
+app.use('/',personController);
 
 app.get('/person', function(req, res){
     res.render('person');
  }); 
 
 
-app.post('/person', function(req, res){
-   res.send(req.body);
+// app.post('/person', function(req, res){
+//    res.send(req.body);
    
- });
+//  });
 app.listen(3000, function(){
    console.log("Server is running...");
 });

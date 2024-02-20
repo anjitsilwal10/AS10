@@ -17,16 +17,15 @@ app.post('/person', function (req, res) {
     });
 
     // Save the new person to the database
+    console.log('Saving: ', newPerson);
+
     newPerson.save()
-        .then(() => {
-            console.log('Person saved to the database');
-            // Send a response indicating success
+        .then((savedPerson) => {
+            console.log('Saved person: ', savedPerson);
             res.send('Person saved to the database');
         })
         .catch(err => {
-            // Log any errors that occur
             console.error(err);
-            // Send an error response with status code 400
             res.status(400).send('Unable to save to database');
         });
 });
